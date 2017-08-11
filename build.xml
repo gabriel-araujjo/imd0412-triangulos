@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="triangulos" default="all">
+  
+  
+  <property file="triangulos.properties"/>
+  <!-- Uncomment the following property if no tests compilation is needed -->
+  <!-- 
+  <property name="skip.tests" value="true"/>
+   -->
+  
+  <!-- Compiler options -->
+  
+  <property name="compiler.debug" value="on"/>
+  <property name="compiler.generate.no.warnings" value="off"/>
+  <property name="compiler.args" value=""/>
+  <property name="compiler.max.memory" value="700m"/>
+  <patternset id="ignored.files">
+    <exclude name="**/*.hprof/**"/>
+    <exclude name="**/*.pyc/**"/>
+    <exclude name="**/*.pyo/**"/>
+    <exclude name="**/*.rbc/**"/>
+    <exclude name="**/*.yarb/**"/>
+    <exclude name="**/*~/**"/>
+    <exclude name="**/.DS_Store/**"/>
+    <exclude name="**/.git/**"/>
+    <exclude name="**/.hg/**"/>
+    <exclude name="**/.svn/**"/>
+    <exclude name="**/CVS/**"/>
+    <exclude name="**/__pycache__/**"/>
+    <exclude name="**/_svn/**"/>
+    <exclude name="**/vssver.scc/**"/>
+    <exclude name="**/vssver2.scc/**"/>
+  </patternset>
+  <patternset id="library.patterns">
+    <include name="*.war"/>
+    <include name="*.swc"/>
+    <include name="*.zip"/>
+    <include name="*.egg"/>
+    <include name="*.ane"/>
+    <include name="*.jar"/>
+    <include name="*.ear"/>
+  </patternset>
+  <patternset id="compiler.resources">
+    <exclude name="**/?*.java"/>
+    <exclude name="**/?*.form"/>
+    <exclude name="**/?*.class"/>
+    <exclude name="**/?*.groovy"/>
+    <exclude name="**/?*.scala"/>
+    <exclude name="**/?*.flex"/>
+    <exclude name="**/?*.kt"/>
+    <exclude name="**/?*.clj"/>
+    <exclude name="**/?*.aj"/>
+  </patternset>
+  
+  
+  <!-- Project Libraries -->
+  
+  <path id="library.lib.classpath">
+    <fileset dir="${basedir}/lib">
+      <patternset refid="library.patterns"/>
+    </fileset>
+  </path>
+
+  <!-- Test Libraries -->
+
+  <path id="library.testlib.classpath">
+    <fileset dir="${basedir}/lib/test">
+      <patternset refid="library.patterns"/>
+    </fileset>
+  </path>
+  
+  <!-- Modules -->
+  
+  
+  <!-- Module Triangulos -->
+  
+  <dirname property="module.triangulos.basedir" file="${ant.file}"/>
+  
+  
+  
+  <property name="compiler.args.triangulos" value="-encoding UTF-8 -source 1.8 -target 1.8 ${compiler.args}"/>
+  
+  <property name="triangulos.output.dir" value="${module.triangulos.basedir}/out/production/Triangulos"/>
+  <property name="triangulos.testoutput.dir" value="${module.triangulos.basedir}/out/test/Triangulos"/>
+  <property name="triangulos.testresult.dir" value="${module.triangulos.basedir}/out/test-results"/>
+  <property name="jarfile" value="${module.triangulos.basedir}/out/${ant.project.name}.jar"/>
+  
+  <path id="triangulos.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="triangulos.module.production.classpath">
+    <path refid="library.lib.classpath"/>
+  </path>
+  
+  <path id="triangulos.runtime.production.module.classpath">
+    <pathelement location="${triangulos.output.dir}"/>
+    <path refid="library.lib.classpath"/>
+  </path>
+  
+  <path id="triangulos.module.classpath">
+    <pathelement location="${triangulos.output.dir}"/>
+    <path refid="library.lib.classpath"/>
+  </path>
+  
+  <path id="triangulos.runtime.module.classpath">
+    <pathelement location="${triangulos.testoutput.dir}"/>
+    <pathelement location="${triangulos.output.dir}"/>
+    <path refid="library.lib.classpath"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.triangulos">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.triangulos">
+    <patternset refid="excluded.from.module.triangulos"/>
+  </patternset>
+  
+  <path id="triangulos.module.sourcepath">
+    <dirset dir="${module.triangulos.basedir}">
+      <include name="src"/>
+    </dirset>
+  </path>
+  
+  <path id="triangulos.module.test.sourcepath">
+    <dirset dir="${module.triangulos.basedir}">
+      <include name="test"/>
+    </dirset>
+  </path>
+  
+  <target name="compile.module.triangulos" depends="compile.module.triangulos.production,compile.module.triangulos.tests" description="Compile module Triangulos"/>
+  
+  <target name="compile.module.triangulos.production" description="Compile module Triangulos; production classes">
+    <mkdir dir="${triangulos.output.dir}"/>
+    <javac destdir="${triangulos.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true">
+      <compilerarg line="${compiler.args.triangulos}"/>
+      <bootclasspath refid="triangulos.module.bootclasspath"/>
+      <classpath refid="triangulos.module.production.classpath"/>
+      <src refid="triangulos.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.triangulos"/>
+    </javac>
+    
+    <copy todir="${triangulos.output.dir}">
+      <fileset dir="${module.triangulos.basedir}/src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.triangulos.tests" depends="compile.module.triangulos.production" description="compile module Triangulos; test classes" unless="skip.tests">
+    <mkdir dir="${triangulos.testoutput.dir}"/>
+    <javac destdir="${triangulos.testoutput.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true">
+      <compilerarg line="${compiler.args.triangulos}"/>
+      <bootclasspath refid="triangulos.module.bootclasspath"/>
+      <classpath refid="triangulos.module.classpath"/>
+      <src refid="triangulos.module.test.sourcepath"/>
+      <patternset refid="excluded.from.compilation.triangulos"/>
+    </javac>
+    
+    <copy todir="${triangulos.testoutput.dir}">
+      <fileset dir="${module.triangulos.basedir}/test">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+
+  <target name="jar" description="jar project" depends="compile.module.triangulos.production">
+    <jar basedir="${triangulos.output.dir}" destfile="${jarfile}">
+      <manifest>
+        <attribute name="Main-Class" value="ga.gabrielaraujo.Main"/>
+      </manifest>
+    </jar>
+  </target>
+
+  <target name="test.module.triangulos" description="test module" depends="compile.module.triangulos.tests">
+    <mkdir dir="${triangulos.testresult.dir}"/>
+    <junit printsummary="yes" haltonfailure="yes">
+      <classpath>
+        <path refid="library.testlib.classpath"/>
+        <path refid="triangulos.runtime.module.classpath"/>
+      </classpath>
+
+      <formatter type="plain"/>
+
+      <test name="ga.gabrielaraujo.TriangleUtilSuite"
+            haltonfailure="no" outfile="result" todir="${triangulos.testresult.dir}">
+        <formatter type="xml"/>
+      </test>
+
+    </junit>
+  </target>
+  
+  <target name="clean.module.triangulos" description="cleanup module">
+    <delete dir="${triangulos.output.dir}"/>
+    <delete dir="${triangulos.testoutput.dir}"/>
+    <delete dir="${triangulos.testresult.dir}"/>
+  </target>
+  
+  <target name="init" description="Build initialization">
+    <!-- Perform any build initialization in this target -->
+  </target>
+  
+  <target name="clean" depends="clean.module.triangulos" description="cleanup all"/>
+  
+  <target name="build.modules" depends="init, clean, compile.module.triangulos" description="build all modules"/>
+  
+  <target name="all" depends="build.modules" description="build all"/>
+
+  <target name="test" depends="test.module.triangulos" description="test all"/>
+</project>
